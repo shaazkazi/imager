@@ -9,7 +9,7 @@ const App = () => {
     const formData = new FormData();
     formData.append("image", file);
 
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+    const API_URL = 'https://imager-backend.onrender.com'
 
     fetch(`${API_URL}/api/metadata`, {
       method: "POST",
