@@ -11,7 +11,7 @@ const App = () => {
     const formData = new FormData();
     formData.append("image", file);
 
-    fetch("http://localhost:5000/api/metadata", {
+    fetch("https://imager-backend.onrender.com/api/metadata", {
       method: "POST",
       body: formData,
     })
