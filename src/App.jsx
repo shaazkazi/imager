@@ -4,20 +4,26 @@ import MetadataDisplay from "./components/MetadataDisplay";
 
 const App = () => {
   const [metadata, setMetadata] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleUpload = (file) => {
+    setIsLoading(true);
     const formData = new FormData();
     formData.append("image", file);
 
-    const API_URL = 'https://imager-backend.onrender.com'
-
-    fetch(`${API_URL}/api/metadata`, {
+    fetch("http://localhost:5000/api/metadata", {
       method: "POST",
       body: formData,
     })
       .then((response) => response.ok ? response.json() : Promise.reject())
-      .then((data) => setMetadata(data))
-      .catch((error) => console.error("Error:", error));
+      .then((data) => {
+        setMetadata(data);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -54,19 +60,40 @@ const App = () => {
         }}>
           🔒 Your privacy matters - Images are processed locally and never stored on our servers
         </p>
-        <div style={{
-          width: '100%',
-          background: 'white',
-          borderRadius: '0.5rem',
-          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-          padding: '1rem',
-          boxSizing: 'border-box'
-        }}>
-          <Uploader onUpload={handleUpload} />
+        <Uploader onUpload={handleUpload} />
+        {isLoading ? (
+          <div style={{
+            textAlign: 'center',
+            padding: '2rem',
+            color: '#4b5563'
+          }}>
+            <div style={{
+              display: 'inline-block',
+              animation: 'spin 1s linear infinite',
+              border: '3px solid #e5e7eb',
+              borderTopColor: '#3b82f6',
+              borderRadius: '50%',
+              width: '2rem',
+              height: '2rem',
+              marginBottom: '0.5rem'
+            }} />
+            <p>Processing image metadata...</p>
+          </div>
+        ) : (
           <MetadataDisplay metadata={metadata} />
-        </div>
+        )}
       </div>
+      <style>
+        {`
+          @keyframes spin {
+            to {
+              transform: rotate(360deg);
+            }
+          }
+        `}
+      </style>
     </div>
-  );};
+  );
+};
 
 export default App;
